@@ -8,43 +8,40 @@ import org.didcommx.didcomm.secret.SecretResolver;
 import org.didcommx.didcomm.secret.SecretResolverInMemory;
 import org.didcommx.didcomm.secret.SecretResolverEditable;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
-public class SecretResolverInMemoryMock implements SecretResolverEditable {
+public class SecretResolverInMemoryMock implements SecretResolver {
 
     private List<Secret> secrets;
+
+    public SecretResolverInMemory secretResolverInMemory;
+
     public Secret secret1 = new Secret(
             "did:example:alice#key-1",
             VerificationMethodType.JSON_WEB_KEY_2020,
             new VerificationMaterial(
                     VerificationMaterialFormat.JWK,
                     "{\"kty\":\"OKP\"," +
-                            "\"d\":\"f345a556a9b9cc7a48a28e21e2a91f728d91b69a3cbe8fadfd5383083c815923\"," +
-                            "\"crv\":\"Ed25519\",}"
+                            "\"d\":\"pFRUKkyzx4kHdJtFSnlPA9WzqkDT1HWV0xZ5OYZd2SY\"," +
+                            "\"crv\":\"Ed25519\"," +
+                            "\"x\":\"G-boxFB6vOZBu-wXkm-9Lh79I8nf9Z50cILaOgKKGww\"}"
             )
     );
 
+    public void SetSecret() {
+        secrets = new ArrayList<>();
+        secrets.add(secret1);
+
+        secretResolverInMemory = new SecretResolverInMemory(secrets);
+    }
 
     @Override
     public Set<String> findKeys(List<String> list) {
-        return null;
-    }
-
-    @Override
-    public void addKey(Secret secret) {
-
-    }
-
-    @Override
-    public List<String> getKids() {
-        return null;
+        return secretResolverInMemory.findKeys(list);
     }
 
     @Override
     public Optional<Secret> findKey(String s) {
-        return Optional.empty();
+        return secretResolverInMemory.findKey(s);
     }
 }

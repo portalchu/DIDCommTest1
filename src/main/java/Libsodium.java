@@ -1,18 +1,103 @@
 import com.muquit.libsodiumjna.*;
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
-import org.apache.log4j.BasicConfigurator;
+import com.sun.jna.NativeLong;
+import kotlin.sequences.Sequence;
+import mock.DIDDocResolverMock;
+import mock.SecretResolverInMemoryMock;
+import org.didcommx.didcomm.DIDComm;
+import org.didcommx.didcomm.crypto.key.Key;
+import org.didcommx.didcomm.crypto.key.RecipientKeySelector;
+import org.didcommx.didcomm.crypto.key.SenderKeySelector;
+import org.didcommx.didcomm.message.Message;
+import org.didcommx.didcomm.model.PackEncryptedParams;
+import org.didcommx.didcomm.model.PackEncryptedResult;
+import org.didcommx.didcomm.model.UnpackParams;
+import org.didcommx.didcomm.model.UnpackResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
+import java.util.*;
 
 public class Libsodium {
 
     private static Logger logger = LoggerFactory.getLogger(Libsodium.class);
 
-    public static void main(String[] args) {
+    public void DIDCommTestFun() {
+        String aliceDID = "did:example:alice";
+        String aliceDIDKey = "did:example:alice#key-1";
 
-        BasicConfigurator.configure();
+        DIDDocResolverMock didDocResolverMock = new DIDDocResolverMock();
+        didDocResolverMock.SetDIDDoc();
+
+        SecretResolverInMemoryMock secretResolverInMemoryMock = new SecretResolverInMemoryMock();
+        secretResolverInMemoryMock.SetSecret();
+
+        DIDComm didComm = new DIDComm(didDocResolverMock, secretResolverInMemoryMock);
+
+        logger.debug("========== Key Test ==========");
+
+        SenderKeySelector senderKeySelector = new SenderKeySelector(didDocResolverMock, secretResolverInMemoryMock);
+        List<Key> keys = senderKeySelector.findAnonCryptKeys(aliceDID);
+
+        for (Key key : keys) {
+            logger.debug("Key : " + key.getId());
+            logger.debug("Key : " + key.getJwk());
+            logger.debug("Key : " + key.toString());
+        }
+
+        RecipientKeySelector recipientKeySelector = new RecipientKeySelector(didDocResolverMock, secretResolverInMemoryMock);
+        List<String> testList = new ArrayList<String>();
+        testList.add(aliceDIDKey);
+
+        Sequence<Key> toKeys = recipientKeySelector.findAnonCryptKeys(testList);
+
+        Iterator<Key> keyIter = toKeys.iterator();
+
+        while (keyIter.hasNext()) {
+            Key key = keyIter.next();
+            logger.debug("Key : " + key.getId());
+            logger.debug("Key : " + key.getJwk());
+            logger.debug("Key : " + key.toString());
+        }
+
+        logger.debug("========== Key Test End ==========");
+
+        Map<String, String> body = new HashMap<>();
+        body.put("message", "Helo");
+
+        List<String> to = new ArrayList<>();
+        to.add(aliceDID);
+
+        Message message = Message.Companion.builder(
+                        "1234", body, "http://example.com/protocols/lets_do_lunch/1.0/proposal")
+                .from(aliceDID)
+                .to(to)
+                .createdTime(1546521l)
+                .expiresTime(1543215l)
+                .build();
+
+        logger.debug("Message : " + message.toString());
+
+        PackEncryptedParams packEncryptedParams = PackEncryptedParams.Companion.builder(
+                        message, aliceDID)
+                .from(aliceDID)
+                .build();
+
+        PackEncryptedResult packEncryptedResult = didComm.packEncrypted(packEncryptedParams);
+
+        logger.debug(packEncryptedResult.getPackedMessage());
+
+        UnpackParams unpackParams = new UnpackParams.Builder(packEncryptedResult.getPackedMessage())
+                .secretResolver(secretResolverInMemoryMock)
+                .build();
+
+        UnpackResult unpackResult = didComm.unpack(unpackParams);
+
+        logger.debug(unpackResult.getMessage().toString());
+    }
+
+    public void LibsodiumTestFun() {
 
         String libraryPath = "C:/v143/dynamic/libsodium.dll";
         System.out.println("Library path in Windows: " + libraryPath);
@@ -70,7 +155,13 @@ public class Libsodium {
 
         try {
 
+            NativeLong number1 = SodiumLibrary.cryptoSecretBoxKeyBytes();
+            logger.debug("SecretKey" + number1.toString());
+            NativeLong number2 = SodiumLibrary.crytoBoxPublicKeyBytes();
+            logger.debug("PublicKey" + number2.toString());
+
             SodiumKeyPair kp  = SodiumLibrary.cryptoBoxKeyPair();
+            SodiumLibrary.cryptoBoxKeyPair();
             byte[] publicKey  = kp.getPublicKey();
             byte[] privateKey = kp.getPrivateKey();
 
@@ -82,12 +173,9 @@ public class Libsodium {
             System.out.println("privateKey: " + privateKey);
             System.out.println("hexPrivateKey: " + hexPrivateKey);
 
-            logger.error("error");
 
         } catch (SodiumLibraryException e) {
-        throw new RuntimeException(e);
-    }
-
-
+            throw new RuntimeException(e);
+        }
     }
 }
