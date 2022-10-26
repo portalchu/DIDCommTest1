@@ -26,6 +26,10 @@
         <id>danubetech-maven-public</id>
         <url>https://repo.danubetech.com/repository/maven-public/</url>
     </repository>
+    <repository>
+        <id>jcenter</id>
+        <url>https://jcenter.bintray.com/</url>
+    </repository>
 </repositories>
 
     <build>
@@ -131,6 +135,11 @@
             <groupId>org.jetbrains.kotlin</groupId>
             <artifactId>kotlin-stdlib</artifactId>
             <version>${kotlin.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.goterl</groupId>
+            <artifactId>lazysodium-java</artifactId>
+            <version>5.1.1</version>
         </dependency>
     </dependencies>
 

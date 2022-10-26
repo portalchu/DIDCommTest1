@@ -1,3 +1,4 @@
+import com.goterl.lazysodium.SodiumJava;
 import com.muquit.libsodiumjna.*;
 import com.muquit.libsodiumjna.exceptions.SodiumLibraryException;
 import com.sun.jna.NativeLong;
@@ -99,42 +100,53 @@ public class Libsodium {
 
     public void LibsodiumTestFun() {
 
-        String libraryPath = "C:/v143/dynamic/libsodium.dll";
-        System.out.println("Library path in Windows: " + libraryPath);
-        SodiumLibrary.setLibraryPath(libraryPath);
-
-        String v = SodiumLibrary.libsodiumVersionString();
-        System.out.println("libsodium version: " + v);
-
-        byte[] randomBytes = SodiumLibrary.randomBytes(16);
-        String hex = SodiumUtils.binary2Hex(randomBytes);
-        System.out.println("Generate " + hex + " random bytes");
-
-        // generate libsodium's standard number of salt bytes
-        int n = SodiumLibrary.cryptoNumberSaltBytes();
-        System.out.println("Generate " + n + " random bytes");
-        byte[] salt = SodiumLibrary.randomBytes(n);
-        System.out.println("Generated " + salt.length + " random bytes");
-        String hex2 = SodiumUtils.binary2Hex(salt);
-        System.out.println("Random bytes: " + hex2);
-
-        // don't forget to load the libsodium library first
-
-        String message = "This is a message";
-
-        // generate nonce
-        int nonceBytesLength = SodiumLibrary.cryptoSecretBoxNonceBytes().intValue();
-        byte[] nonceBytes = SodiumLibrary.randomBytes(nonceBytesLength);
-        byte[] messageBytes = message.getBytes();
-
-        // generate the encryption key
-        byte[] key = SodiumLibrary.randomBytes(SodiumLibrary.cryptoSecretBoxKeyBytes().intValue());
-        System.out.println("key: " + key);
-
-        // encrypt
-        byte[] cipherText = new byte[0];
-
         try {
+            String libraryPath = "C:/v143/dynamic/libsodium.dll";
+            System.out.println("Library path in Windows: " + libraryPath);
+            SodiumLibrary.setLibraryPath(libraryPath);
+
+            String v = SodiumLibrary.libsodiumVersionString();
+            System.out.println("libsodium version: " + v);
+
+            byte[] randomBytes = SodiumLibrary.randomBytes(16);
+            String hex = SodiumUtils.binary2Hex(randomBytes);
+            System.out.println("TT : Generate " + hex + " random bytes");
+
+            byte[] hexH1 = Base64.getEncoder().encode(randomBytes);
+            System.out.println("base : Generate " + hexH1 + " random bytes");
+
+            byte[] randomBytesPair = SodiumLibrary.cryptoPublicKey(randomBytes);
+            String hex3 = SodiumUtils.binary2Hex(randomBytesPair);
+            System.out.println("TT : Generate " + hex3 + " random bytes");
+
+            byte[] hexH2 = Base64.getEncoder().encode(randomBytesPair);
+            System.out.println("base : Generate " + hexH2 + " random bytes");
+
+            // generate libsodium's standard number of salt bytes
+            int n = SodiumLibrary.cryptoNumberSaltBytes();
+            System.out.println("Generate " + n + " random bytes");
+            byte[] salt = SodiumLibrary.randomBytes(n);
+            System.out.println("Generated " + salt.length + " random bytes");
+            String hex2 = SodiumUtils.binary2Hex(salt);
+            System.out.println("Random bytes: " + hex2);
+
+            // don't forget to load the libsodium library first
+
+            String message = "This is a message";
+
+            // generate nonce
+            int nonceBytesLength = SodiumLibrary.cryptoSecretBoxNonceBytes().intValue();
+            byte[] nonceBytes = SodiumLibrary.randomBytes(nonceBytesLength);
+            byte[] messageBytes = message.getBytes();
+
+            // generate the encryption key
+            byte[] key = SodiumLibrary.randomBytes(SodiumLibrary.cryptoSecretBoxKeyBytes().intValue());
+            System.out.println("key: " + key);
+            System.out.println("key: " + SodiumUtils.binary2Hex(key));
+
+            // encrypt
+            byte[] cipherText = new byte[0];
+
             cipherText = SodiumLibrary.cryptoSecretBoxEasy(messageBytes, nonceBytes, key);
 
             byte[] decryptedMessageBytes = SodiumLibrary.cryptoSecretBoxOpenEasy(cipherText, nonceBytes, key);
@@ -144,16 +156,9 @@ public class Libsodium {
             System.out.println("Decrypted message: " + decryptedMessageBytes);
             System.out.println("Decrypted message: " + decryptedMessage);
 
-        } catch (SodiumLibraryException e) {
-            throw new RuntimeException(e);
-        } catch (UnsupportedEncodingException e)
-        {
-            e.printStackTrace();
-        }
 
-        System.out.println("============== Key Pair ============= ");
+            System.out.println("============== Key Pair ============= ");
 
-        try {
 
             NativeLong number1 = SodiumLibrary.cryptoSecretBoxKeyBytes();
             logger.debug("SecretKey" + number1.toString());
@@ -176,6 +181,15 @@ public class Libsodium {
 
         } catch (SodiumLibraryException e) {
             throw new RuntimeException(e);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
         }
+    }
+
+    public void LazySodiumTest() {
+
+
+
+        SodiumJava sodium = new SodiumJava();
     }
 }

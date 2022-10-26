@@ -28,9 +28,22 @@ public class SecretResolverInMemoryMock implements SecretResolver {
             )
     );
 
+    public Secret secret2 = new Secret(
+            "did:example:alice#key-2",
+            VerificationMethodType.JSON_WEB_KEY_2020,
+            new VerificationMaterial(
+                    VerificationMaterialFormat.JWK,
+                    "{\"kty\":\"OKP\"," +
+                            "\"d\":\"09b7321642fd79fb85c01bb72a5571ccbb7a358428968d3989ae812df0a08b01\"," +
+                            "\"crv\":\"X25519\"," +
+                            "\"x\":\"e00949828d30c93a5aff198e166284e000e817a86c2d2b3a952827a43ca9c367\"}"
+            )
+    );
+
     public void SetSecret() {
         secrets = new ArrayList<>();
         secrets.add(secret1);
+        secrets.add(secret2);
 
         secretResolverInMemory = new SecretResolverInMemory(secrets);
     }
