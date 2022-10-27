@@ -112,7 +112,7 @@ public class Libsodium {
             String hex = SodiumUtils.binary2Hex(randomBytes);
             System.out.println("TT : Generate " + hex + " random bytes");
 
-            byte[] hexH1 = Base64.getEncoder().encode(randomBytes);
+            String hexH1 = Base64.getUrlEncoder().encodeToString(randomBytes);
             System.out.println("base : Generate " + hexH1 + " random bytes");
 
             byte[] randomBytesPair = SodiumLibrary.cryptoPublicKey(randomBytes);
@@ -171,12 +171,16 @@ public class Libsodium {
             byte[] privateKey = kp.getPrivateKey();
 
             String hexPublicKey  = SodiumUtils.binary2Hex(publicKey);
+            String basePublicKey = Base64.getEncoder().encodeToString(publicKey);
             String hexPrivateKey = SodiumUtils.binary2Hex(privateKey);
+            String basePrivateKey = Base64.getEncoder().encodeToString(privateKey);
 
             System.out.println("publicKey: " + publicKey);
             System.out.println("hexPublicKey: " + hexPublicKey);
             System.out.println("privateKey: " + privateKey);
             System.out.println("hexPrivateKey: " + hexPrivateKey);
+            System.out.println("basePublicKey: " + basePublicKey);
+            System.out.println("basePrivateKey: " + basePrivateKey);
 
 
         } catch (SodiumLibraryException e) {

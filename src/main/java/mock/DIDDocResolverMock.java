@@ -26,7 +26,7 @@ public class DIDDocResolverMock implements DIDDocResolver {
                         VerificationMaterialFormat.JWK,
                         "{\"kty\":\"OKP\"," +
                                 "\"crv\":\"Ed25519\"," +
-                                "\"x\":\"G-boxFB6vOZBu-wXkm-9Lh79I8nf9Z50cILaOgKKGww\"}"
+                                "\"x\":\"hcVNRzH7mQArc+o1Tf9zHOh85xj+EdIFglZQYYEaoEA=\"}"
                 ),
                 "did:example:alice#key-1"
         );
@@ -38,7 +38,7 @@ public class DIDDocResolverMock implements DIDDocResolver {
                         VerificationMaterialFormat.JWK,
                         "{\"kty\":\"OKP\"," +
                                 "\"crv\":\"X25519\"," +
-                                "\"x\":\"e00949828d30c93a5aff198e166284e000e817a86c2d2b3a952827a43ca9c367\"}"
+                                "\"x\":\"qCNxmHo8okIehEck/YX+/KLU07ySk0OGxe91FT4wLBE=\"}"
                 ),
                 "did:example:alice#key-2"
         );
