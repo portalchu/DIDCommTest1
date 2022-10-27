@@ -7,7 +7,8 @@ public class DIDCommTest {
         Libsodium libsodium = new Libsodium();
 
         //libsodium.LazySodiumTest();
-        libsodium.LibsodiumTestFun();
+        //libsodium.LibsodiumTestFun();
+        libsodium.NimbusdsTestFun();
         libsodium.DIDCommTestFun();
     }
 

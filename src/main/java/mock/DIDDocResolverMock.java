@@ -11,22 +11,20 @@ import java.util.Optional;
 
 public class DIDDocResolverMock implements DIDDocResolver {
 
-    public VerificationMethod AliceMethod;
-
     private DIDDoc didDoc1;
     private List<DIDDoc> didDocList = new ArrayList<>();
 
     public DIDDocResolverInMemory didDocResolverInMemory;
 
     public void SetDIDDoc() {
-        AliceMethod = new VerificationMethod(
+        VerificationMethod AliceMethod = new VerificationMethod(
                 "did:example:alice#key-1",
                 VerificationMethodType.JSON_WEB_KEY_2020,
                 new VerificationMaterial(
                         VerificationMaterialFormat.JWK,
                         "{\"kty\":\"OKP\"," +
                                 "\"crv\":\"Ed25519\"," +
-                                "\"x\":\"hcVNRzH7mQArc+o1Tf9zHOh85xj+EdIFglZQYYEaoEA=\"}"
+                                "\"x\":\"1eESIYXnbLGwyNPeH0Nwxasd7exQJR2UD1OBGqoZDcg\"}"
                 ),
                 "did:example:alice#key-1"
         );
@@ -38,7 +36,7 @@ public class DIDDocResolverMock implements DIDDocResolver {
                         VerificationMaterialFormat.JWK,
                         "{\"kty\":\"OKP\"," +
                                 "\"crv\":\"X25519\"," +
-                                "\"x\":\"qCNxmHo8okIehEck/YX+/KLU07ySk0OGxe91FT4wLBE=\"}"
+                                "\"x\":\"F0g1QxzOMqTo00hg6PIf4zHY0_6FMe_OBujYsenYz3Q\"}"
                 ),
                 "did:example:alice#key-2"
         );

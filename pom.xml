@@ -141,6 +141,16 @@
             <artifactId>lazysodium-java</artifactId>
             <version>5.1.1</version>
         </dependency>
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>9.25.6</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.crypto.tink</groupId>
+            <artifactId>tink</artifactId>
+            <version>1.2.0-rc2</version>
+        </dependency>
     </dependencies>
 
 </project>

@@ -22,9 +22,9 @@ public class SecretResolverInMemoryMock implements SecretResolver {
             new VerificationMaterial(
                     VerificationMaterialFormat.JWK,
                     "{\"kty\":\"OKP\"," +
-                            "\"d\":\"geF/ugy7o77ko7V8IzaqS0XNRkvCcA+hm3wbpNr2BoI=\"," +
+                            "\"d\":\"S160ItbVu2znR1NFs3xaay2Vy5vtjkaJHqPZLHcW-pQ\"," +
                             "\"crv\":\"Ed25519\"," +
-                            "\"x\":\"hcVNRzH7mQArc+o1Tf9zHOh85xj+EdIFglZQYYEaoEA=\"}"
+                            "\"x\":\"1eESIYXnbLGwyNPeH0Nwxasd7exQJR2UD1OBGqoZDcg\"}"
             )
     );
 
@@ -34,9 +34,9 @@ public class SecretResolverInMemoryMock implements SecretResolver {
             new VerificationMaterial(
                     VerificationMaterialFormat.JWK,
                     "{\"kty\":\"OKP\"," +
-                            "\"d\":\"r04d4PkdaggRG3DEaK7jzIjf5bNP0tTyorvYFYbH5UU=\"," +
+                            "\"d\":\"H1pzr9giveKVM2R_4StWO9edQGjkkQg_nE6SBqz5mZo\"," +
                             "\"crv\":\"X25519\"," +
-                            "\"x\":\"qCNxmHo8okIehEck/YX+/KLU07ySk0OGxe91FT4wLBE=\"}"
+                            "\"x\":\"F0g1QxzOMqTo00hg6PIf4zHY0_6FMe_OBujYsenYz3Q\"}"
             )
     );
 
