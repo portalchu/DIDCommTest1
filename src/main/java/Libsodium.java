@@ -265,10 +265,43 @@ public class Libsodium {
             System.out.println("hexPrivateKey: " + hexPrivateKeySS);
             System.out.println("basePrivateKey: " + basePrivateKeySS);
 
+            System.out.println("============== Key Generation ============= ");
+
+            OctetKeyPair jwk = new OctetKeyPairGenerator(Curve.X25519)
+                    .keyUse(KeyUse.ENCRYPTION) // indicate the intended use of the key
+                    .keyID(UUID.randomUUID().toString()) // give the key a unique ID
+                    .generate();
+
+            byte[] jwkPublicKey = jwk.getDecodedX();
+            byte[] jwkPrivateKey = jwk.getDecodedD();
+
+            String testMessage = "Test123";
+
+            byte[] jwkCrytoBox = SodiumLibrary.cryptoBoxEasy(
+                    testMessage.getBytes(), nonceBytes, jwkPublicKey, jwkPrivateKey);
+
+            System.out.println("jwkCrytoBox : " + SodiumUtils.binary2Hex(jwkCrytoBox));
+
+            byte[] jwkCrytoOpenBox = SodiumLibrary.cryptoBoxOpenEasy(
+                    jwkCrytoBox, nonceBytes, jwkPublicKey, jwkPrivateKey);
+
+            System.out.println("jwkCrytoOpenBox : " + SodiumUtils.binary2Hex(jwkCrytoBox));
+            System.out.println("jwkCrytoOpenBox : " + new String(jwkCrytoOpenBox));
+
+
+
+            //SodiumLibrary.cryptoPublicKey()
+
+
+            System.out.println("============== Sodium End ============= ");
+
+
         } catch (SodiumLibraryException e) {
             throw new RuntimeException(e);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
+        } catch (JOSEException e) {
+            throw new RuntimeException(e);
         }
     }
 
