@@ -40,10 +40,66 @@ public class SecretResolverInMemoryMock implements SecretResolver {
             )
     );
 
+    public Secret secret3 = new Secret(
+            "did:example:alice#key-3",
+            VerificationMethodType.JSON_WEB_KEY_2020,
+            new VerificationMaterial(
+                    VerificationMaterialFormat.JWK,
+                    "{\"kty\":\"EC\"," +
+                            "\"d\":\"hzpirXFgetzlSNbMForoDupm-0uJOZDmdGAKEd_7rR4\"," +
+                            "\"crv\":\"P-256\"," +
+                            "\"x\":\"ivYUvybjaokTJantAbzGg96L4qkCjngDbliNp3yPkzM\"," +
+                            "\"y\":\"ZtMsrzFOx-kdqQd_jJc2TnN_ASFJc2m0C7R2VhkfSJs\"}"
+            )
+    );
+
+    public Secret secret4 = new Secret(
+            "did:example:alice#key-4",
+            VerificationMethodType.JSON_WEB_KEY_2020,
+            new VerificationMaterial(
+                    VerificationMaterialFormat.JWK,
+                    "{\"kty\":\"EC\"," +
+                            "\"d\":\"4Rcw7vIxAsLLpg2r_4P38RqfMMT1IssOPWy9HPVf6ZiHTUmvOAhWPijUwEHSic0T\"," +
+                            "\"crv\":\"P-384\"," +
+                            "\"x\":\"wKqfYznOMAtdHuMfzn3kxSXj-em2PHnzBRwalbJZRVfnrvO5zMgpwL0cvBw89QML\"," +
+                            "\"y\":\"QLmGVThWGUF3yOo1WdBuuepKygs4xOnpZErxJrp33UjST8uaF75l7RR5YdDcuxPs\"}"
+            )
+    );
+
+    public Secret secret5 = new Secret(
+            "did:example:alice#key-5",
+            VerificationMethodType.JSON_WEB_KEY_2020,
+            new VerificationMaterial(
+                    VerificationMaterialFormat.JWK,
+                    "{\"kty\":\"EC\"," +
+                            "\"d\":\"AfsrIZrgaCjx-f_UQ0RKc2yQ2rEkKBFkq5wemObC8U5a2H3qKQ1h7xtG1zV1dYkou1w68CpuazyH07x6-cAlPZll\"," +
+                            "\"crv\":\"P-521\"," +
+                            "\"x\":\"AdhTtFmjcApJOXNNH9DASL1V6_q3Vs_PUVX-5HxVMywPtX7dAO02_kUBej4Wf7hbwNXktnAkn-YXrOohGQ9IBMPS\"," +
+                            "\"y\":\"AaG7be12d_uptxBUL1p9cey0TRTR5mxVMfe8OxZUjrRUgFmguBzEKUgPIIG9WQofvbjKxPcLVjHrPwGBH8QsHmcW\"}"
+            )
+    );
+
+    public Secret secret6 = new Secret(
+            "did:example:alice#key-6",
+            VerificationMethodType.JSON_WEB_KEY_2020,
+            new VerificationMaterial(
+                    VerificationMaterialFormat.JWK,
+                    "{\"kty\":\"EC\"," +
+                            "\"d\":\"esirDdBuB0W89iyWvymmDBWSjKHF8XtZWS2ayxy5lUk\"," +
+                            "\"crv\":\"secp256k1\"," +
+                            "\"x\":\"YtMKHzQ7XfvEXGE_XvDNPYxhdvOGZes0UlNqkzXUNSM\"," +
+                            "\"y\":\"M37EnuxZv85ucjHINqKadm9Y84t97hn8P5KRyxZIlmE\"}"
+            )
+    );
+
     public void SetSecret() {
         secrets = new ArrayList<>();
         secrets.add(secret1);
         secrets.add(secret2);
+        secrets.add(secret3);
+        secrets.add(secret4);
+        secrets.add(secret5);
+        secrets.add(secret6);
 
         secretResolverInMemory = new SecretResolverInMemory(secrets);
     }

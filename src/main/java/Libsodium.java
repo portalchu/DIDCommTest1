@@ -31,6 +31,9 @@ public class Libsodium {
     private static Logger logger = LoggerFactory.getLogger(Libsodium.class);
 
     public void DIDCommTestFun() {
+
+        logger.debug("========== DIDComm Test ==========");
+
         String aliceDID = "did:example:alice";
         String aliceDIDKey = "did:example:alice#key-1";
 
@@ -44,8 +47,10 @@ public class Libsodium {
 
         logger.debug("========== Key Test ==========");
 
+
         SenderKeySelector senderKeySelector = new SenderKeySelector(didDocResolverMock, secretResolverInMemoryMock);
         List<Key> keys = senderKeySelector.findAnonCryptKeys(aliceDID);
+
 
         for (Key key : keys) {
             logger.debug("Key : " + key.getId());
@@ -68,7 +73,9 @@ public class Libsodium {
             logger.debug("Key : " + key.toString());
         }
 
-        logger.debug("========== Key Test End ==========");
+
+
+        logger.debug("========== Encrypted Test End ==========");
 
         Map<String, String> body = new HashMap<>();
         body.put("message", "Helo");
@@ -103,12 +110,20 @@ public class Libsodium {
 
         logger.debug("UnPack Message : " + unpackResult.getMessage().toString());
 
+
+
         logger.debug("========== Sign Test ==========");
 
+        Map<String, String> body2 = new HashMap<>();
+        body2.put("message", "Helo");
+
+        List<String> to2 = new ArrayList<>();
+        to2.add(aliceDID);
+
         Message message2 = Message.Companion.builder(
-                        "1234", body, "http://example.com/protocols/lets_do_lunch/1.0/proposal")
+                        "1234", body2, "http://example.com/protocols/lets_do_lunch/1.0/proposal")
                 .from(aliceDID)
-                .to(to)
+                .to(to2)
                 .createdTime(1546521l)
                 .expiresTime(1543215l)
                 .build();
@@ -241,6 +256,12 @@ public class Libsodium {
             System.out.println("Decrypted message: " + decryptedMessageBytes2);
             System.out.println("Decrypted message: " + decryptedMessage2);
 
+            byte[] signMessage = SodiumLibrary.cryptoSign(messageBytes, privateKey);
+            System.out.println("signMessage : " + Base64.getEncoder().encodeToString(signMessage));
+
+            byte[] signMessageOpen = SodiumLibrary.cryptoSignOpen(signMessage, publicKey);
+            System.out.println("signMessageOpen : " + new String(signMessageOpen));
+
             System.out.println("============== Sign Key 2 ============= ");
 
             SodiumKeyPair kps = SodiumLibrary.cryptoSignKeyPair();
@@ -265,6 +286,13 @@ public class Libsodium {
             System.out.println("hexPrivateKey: " + hexPrivateKeySS);
             System.out.println("basePrivateKey: " + basePrivateKeySS);
 
+            byte[] privateKeyC = SodiumLibrary.cryptoSignEdSkTOcurveSk(privateKeyS);
+            byte[] publicKeyC = SodiumLibrary.cryptoSignEdPkTOcurvePk(publicKeyS);
+            String basePrivateKeyC = Base64.getEncoder().encodeToString(privateKeyC);
+            String basePublicKeyC = Base64.getEncoder().encodeToString(publicKeyC);
+            System.out.println("basePublicKeyC: " + basePublicKeyC);
+            System.out.println("basePrivateKeyC: " + basePrivateKeyC);
+
             System.out.println("============== Key Generation ============= ");
 
             OctetKeyPair jwk = new OctetKeyPairGenerator(Curve.X25519)
@@ -272,10 +300,16 @@ public class Libsodium {
                     .keyID(UUID.randomUUID().toString()) // give the key a unique ID
                     .generate();
 
+            OctetKeyPair jwk2 = new OctetKeyPairGenerator(Curve.Ed25519)
+                    .keyUse(KeyUse.SIGNATURE) // indicate the intended use of the key
+                    .keyID(UUID.randomUUID().toString()) // give the key a unique ID
+                    .generate();
+
             byte[] jwkPublicKey = jwk.getDecodedX();
             byte[] jwkPrivateKey = jwk.getDecodedD();
 
             String testMessage = "Test123";
+            byte[] testMessageByte = testMessage.getBytes();
 
             byte[] jwkCrytoBox = SodiumLibrary.cryptoBoxEasy(
                     testMessage.getBytes(), nonceBytes, jwkPublicKey, jwkPrivateKey);
@@ -288,9 +322,54 @@ public class Libsodium {
             System.out.println("jwkCrytoOpenBox : " + SodiumUtils.binary2Hex(jwkCrytoBox));
             System.out.println("jwkCrytoOpenBox : " + new String(jwkCrytoOpenBox));
 
+            byte[] sodiumPrivateKey = SodiumLibrary.randomBytes(SodiumLibrary.cryptoSecretBoxKeyBytes().intValue());
+            System.out.println("sodiumPrivateKey: " + Base64.getEncoder().encodeToString(sodiumPrivateKey));
 
+            byte[] authMessage = SodiumLibrary.cryptoAuth(testMessageByte, sodiumPrivateKey);
+            System.out.println("authMessage: " + Base64.getEncoder().encodeToString(authMessage));
+
+            //boolean authCheck = SodiumLibrary.cryptoAuthVerify(authMessage, sodiumPrivateKey);
+
+            byte[] edKeyCheck_S = SodiumLibrary.cryptoSignEdSkTOcurveSk(privateKey);
+            //byte[] edKeyCheck_P = SodiumLibrary.cryptoSignEdPkTOcurvePk(publicKey);
+
+            String edKeyBase_S = Base64.getEncoder().encodeToString(edKeyCheck_S);
+            //String edKeyBase_P = Base64.getEncoder().encodeToString(edKeyCheck_P);
+
+            System.out.println("edKeyCheck_S: " + edKeyBase_S);
+            //System.out.println("edKeyCheck_P: " + edKeyBase_P);
+
+            byte[] signMessage1 = SodiumLibrary.cryptoSign(testMessageByte, privateKey);
+            System.out.println("SignMessage: " + Base64.getEncoder().encodeToString(signMessage1));
+
+            byte[] signMessageCheck1 = SodiumLibrary.cryptoSignOpen(signMessage1, publicKey);
+            System.out.println("SignOpenMessage: " + new String(signMessageCheck1));
+
+            byte[] signMessage2 = SodiumLibrary.cryptoSign(testMessageByte, privateKeyC);
+            System.out.println("SignMessage: " + Base64.getEncoder().encodeToString(signMessage2));
+
+            byte[] signMessageCheck2 = SodiumLibrary.cryptoSignOpen(signMessage2, publicKeyC);
+            System.out.println("SignOpenMessage: " + new String(signMessageCheck2, "UTF-8"));
 
             //SodiumLibrary.cryptoPublicKey()
+
+            System.out.println("============== JWK Test2 ============= ");
+
+            System.out.println("jwk2 Ed25519 : " + jwk2.toString());
+            System.out.println("jwk2 Ed25519 PK : " + jwk2.getX());
+            System.out.println("jwk2 Ed25519 SK : " + jwk2.getD());
+
+            kps.setPrivateKey(jwk2.getDecodedD());
+            kps.setPublicKey(jwk2.getDecodedX());
+            System.out.println("kps Ed25519 PK : " + Base64.getEncoder().encodeToString(kps.getPublicKey()));
+            System.out.println("kps Ed25519 SK : " + Base64.getEncoder().encodeToString(kps.getPrivateKey()));
+
+            byte[] signMessage3 = SodiumLibrary.cryptoSign(testMessageByte, kps.getPrivateKey());
+            System.out.println("SignMessage: " + Base64.getEncoder().encodeToString(signMessage3));
+
+            byte[] signMessageCheck3 = SodiumLibrary.cryptoSignOpen(signMessage3, kps.getPublicKey());
+            System.out.println("SignOpenMessage: " + new String(signMessageCheck3));
+
 
 
             System.out.println("============== Sodium End ============= ");
@@ -314,7 +393,12 @@ public class Libsodium {
 
     public void NimbusdsTestFun() {
 
+        System.out.println("============== JWK Test =============");
+
         try {
+
+            System.out.println("============== JWK P_256 Test =============");
+
             KeyPairGenerator gen = KeyPairGenerator.getInstance("EC");
             gen.initialize(Curve.P_256.toECParameterSpec());
             KeyPair keyPair = gen.generateKeyPair();
@@ -325,17 +409,70 @@ public class Libsodium {
 
             System.out.println("jwk: " + jwk);
 
+            System.out.println("============== JWK P_384 Test =============");
+
+            KeyPairGenerator gen4 = KeyPairGenerator.getInstance("EC");
+            gen4.initialize(Curve.P_384.toECParameterSpec());
+            KeyPair keyPair4 = gen4.generateKeyPair();
+
+            JWK jwk4 = new ECKey.Builder(Curve.P_384, (ECPublicKey) keyPair4.getPublic())
+                    .privateKey((ECPrivateKey) keyPair4.getPrivate())
+                    .build();
+
+            System.out.println("jwk: " + jwk4);
+
+            System.out.println("============== JWK P_521 Test =============");
+
+            KeyPairGenerator gen5 = KeyPairGenerator.getInstance("EC");
+            gen5.initialize(Curve.P_521.toECParameterSpec());
+            KeyPair keyPair5 = gen5.generateKeyPair();
+
+            JWK jwk5 = new ECKey.Builder(Curve.P_521, (ECPublicKey) keyPair5.getPublic())
+                    .privateKey((ECPrivateKey) keyPair5.getPrivate())
+                    .build();
+
+            System.out.println("jwk: " + jwk5);
+
+            System.out.println("============== JWK SECP256K1 Test =============");
+
+            KeyPairGenerator gen6 = KeyPairGenerator.getInstance("EC");
+            gen6.initialize(Curve.SECP256K1.toECParameterSpec());
+            KeyPair keyPair6 = gen6.generateKeyPair();
+
+            JWK jwk6 = new ECKey.Builder(Curve.SECP256K1, (ECPublicKey) keyPair6.getPublic())
+                    .privateKey((ECPrivateKey) keyPair6.getPrivate())
+                    .build();
+
+            System.out.println("jwk: " + jwk6);
+
+            /*
+            System.out.println("============== JWK X448 Test =============");
+
+            KeyPairGenerator gen7 = KeyPairGenerator.getInstance("EC");
+            gen7.initialize(Curve.X448.toECParameterSpec());
+            KeyPair keyPair7 = gen7.generateKeyPair();
+
+            JWK jwk7 = new ECKey.Builder(Curve.X448, (ECPublicKey) keyPair7.getPublic())
+                    .privateKey((ECPrivateKey) keyPair7.getPrivate())
+                    .build();
+
+            System.out.println("jwk: " + jwk7);
+
+
+             */
+
+            System.out.println("============== JWK Ed25519 Test =============");
 
             OctetKeyPair jwk2 = new OctetKeyPairGenerator(Curve.Ed25519)
                     .keyUse(KeyUse.SIGNATURE) // indicate the intended use of the key
                     .keyID(UUID.randomUUID().toString()) // give the key a unique ID
                     .generate();
 
-// Output the private and public OKP JWK parameters
             System.out.println(jwk2);
 
-// Output the public OKP JWK parameters only
             System.out.println(jwk2.toPublicJWK());
+
+            System.out.println("============== JWK X25519 Test =============");
 
             OctetKeyPair jwk3 = new OctetKeyPairGenerator(Curve.X25519)
                     .keyUse(KeyUse.ENCRYPTION) // indicate the intended use of the key
@@ -345,6 +482,9 @@ public class Libsodium {
             System.out.println(jwk3);
 
             System.out.println(jwk3.toPublicJWK());
+
+
+
 
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
