@@ -78,7 +78,7 @@ public class Libsodium {
         logger.debug("========== Encrypted Test End ==========");
 
         Map<String, String> body = new HashMap<>();
-        body.put("message", "Helo");
+        body.put("message", "Hello World");
 
         List<String> to = new ArrayList<>();
         to.add(aliceDID);
@@ -115,7 +115,7 @@ public class Libsodium {
         logger.debug("========== Sign Test ==========");
 
         Map<String, String> body2 = new HashMap<>();
-        body2.put("message", "Helo");
+        body2.put("message", "Hello World");
 
         List<String> to2 = new ArrayList<>();
         to2.add(aliceDID);
