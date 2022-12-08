@@ -433,6 +433,7 @@ public class Libsodium {
 
             System.out.println("jwk: " + jwk5);
 
+            /*
             System.out.println("============== JWK SECP256K1 Test =============");
 
             KeyPairGenerator gen6 = KeyPairGenerator.getInstance("EC");
@@ -445,7 +446,6 @@ public class Libsodium {
 
             System.out.println("jwk: " + jwk6);
 
-            /*
             System.out.println("============== JWK X448 Test =============");
 
             KeyPairGenerator gen7 = KeyPairGenerator.getInstance("EC");

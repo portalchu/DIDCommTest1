@@ -9,7 +9,7 @@ public class DIDCommTest {
         //libsodium.LazySodiumTest();
         //libsodium.LibsodiumTestFun();
         libsodium.NimbusdsTestFun();
-        libsodium.DIDCommTestFun();
+        //libsodium.DIDCommTestFun();
     }
 
 
